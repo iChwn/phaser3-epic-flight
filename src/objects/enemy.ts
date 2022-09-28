@@ -16,7 +16,14 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     let idleEnemy = {
       key: 'idleEnemy',
-      frames: this.anims.generateFrameNumbers('enemy', { start: 0, end: 4 }),
+      frames: this.anims.generateFrameNumbers('enemy', { start: 0, end: 8 }),
+      frameRate: 13,
+      repeat: -1
+    }
+
+    let attackEnemy = {
+      key: 'attackEnemy',
+      frames: this.anims.generateFrameNumbers('enemy', { start: 9, end: 17 }),
       frameRate: 10,
       repeat: -1
     }
@@ -24,11 +31,12 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     let deathEnemy = {
       key: 'deathEnemy',
       frames: this.anims.generateFrameNumbers('enemy', { start: 19, end: 24 }),
-      frameRate: 8,
-      repeat: -1
+      frameRate: 10,
+      repeat: 0
     }
 
     this.anims.create(idleEnemy);
+    this.anims.create(attackEnemy);
     this.anims.create(deathEnemy);
 
     this.name = `enemy-${generateUID(5)}`
@@ -40,18 +48,18 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
   respawnEnemy (x:number, y:number){
     this.body.reset(x, y)
+    this.setVelocityX(-500)
     this.setActive(true)
     this.setVisible(true)
-    // this.setVelocityX(-500)   
   }
 
   preUpdate (time:number, delta:number){
     super.preUpdate(time, delta);
-    
-    if(this.x >=  this.scene.physics.world.bounds.width){
+
+    if(this.x <= -50){
       this.setActive(false);
       this.setVisible(false);
-      // this.destroy()
+      this.destroy()
     }
   }
 }

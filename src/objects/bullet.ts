@@ -32,14 +32,11 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
     this.body.reset(x, y)
     this.setActive(true)
     this.setVisible(true)
-    this.setVelocityX(500)   
+    this.setVelocityX(600)   
   }
 
   setCollide() {
-    console.log(this)
-    this.setActive(true)
-    this.setVisible(true)
-    this.setVelocityX(500)  
+    console.log("setCollide bullet") 
   }
 
   preUpdate (time:number, delta:number){

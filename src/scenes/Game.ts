@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import Plane from '../objects/plane';
-import { gameConfig } from "../config"
+import config, { gameConfig } from "../config"
 import Enemy from '../objects/enemy';
 import Bullets from '../objects/bullet';
 import Enemies from '../objects/enemy';
@@ -37,6 +37,8 @@ export default class Demo extends Phaser.Scene {
     this.bullets = new Bullets(this);
 
     this.enemies = new Enemies(this)
+    // this.enemies?.summonEnemy(Phaser.Math.Between(0, this.physics.world.bounds.width), Phaser.Math.Between(0, config.height));
+    this.enemies?.summonEnemy(this.physics.world.bounds.width, this.physics.world.bounds.height / 1.2);
     this.enemies?.summonEnemy(this.physics.world.bounds.width / 1.5, this.physics.world.bounds.height / 2);
     this.enemies?.summonEnemy(this.physics.world.bounds.width / 1.2, this.physics.world.bounds.height / 2);
     this.enemies?.summonEnemy(this.physics.world.bounds.width / 1.2, this.physics.world.bounds.height / 1.5);
@@ -49,6 +51,17 @@ export default class Demo extends Phaser.Scene {
       function (bullet, enemy) {
         enemies.handleCollide(enemy, bullet)
         bullets.handleCollide(bullet, enemy)
+      }
+    );
+
+    let planeObj = this.plane
+    this.physics.add.collider(
+      this.plane,
+      this.enemies,
+      function (plane, enemy) {
+        planeObj.onCollide(plane)
+        // enemies.handleCollide(enemy, bullet)
+        // bullets.handleCollide(bullet, enemy)
       }
     );
 
