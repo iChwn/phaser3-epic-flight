@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { gameConfig } from "../config";
+import { generateUID } from "../helper";
 
 type BulletType = {
   scene: any,
@@ -9,6 +10,7 @@ type BulletType = {
 
 
 class Enemy extends Phaser.Physics.Arcade.Sprite {
+  isExplode: boolean;
   constructor (scene: any, x:number, y:number) {
     super(scene, x, y, 'enemy');
 
@@ -29,7 +31,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.anims.create(idleEnemy);
     this.anims.create(deathEnemy);
 
-    this.name = "enemy"
+    this.name = `enemy-${generateUID(5)}`
+    this.isExplode = false
     this.flipX = true
 
     scene.add.existing(this).play("idleEnemy")
@@ -93,22 +96,18 @@ class Enemies extends Phaser.Physics.Arcade.Group {
     }
   }
 
-  handleCollide (gameObject: any) {
-    let isHitByBullet = false
+  handleCollide (gameObject: any, bullet: any) {
+    if(bullet.active && !gameObject.isExplode) {
+      gameObject.isExplode = true
 
-    console.log(isHitByBullet)
-    if(!isHitByBullet) {
-      isHitByBullet = true
-      console.log(isHitByBullet)
+      bullet.setVisible(false)
+      bullet.setActive(false)
 
-      // gameObject.setVelocity(0)
+      gameObject.setVelocity(0)
       gameObject.playAfterRepeat('idleEnemy')
       gameObject.play('deathEnemy')
-      // this.scene.physics.world.colliders.destroy();
-
-      console.log()
+      // this.scene.physics.world.colliders.destroy();      
       setTimeout(() => {
-        // isHitByBullet = false
         gameObject.setVisible(false)
         gameObject.setActive(false)
         gameObject.destroy()

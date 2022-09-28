@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { gameConfig } from "../config";
+import { generateUID } from "../helper";
 
 type BulletType = {
   scene: any,
@@ -23,7 +24,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
       frameRate: 8,
       repeat: -1,
     });
-
+    this.name = `bullets-${generateUID(5)}`
     scene.add.existing(this).play("fire")
   }
 
@@ -85,9 +86,12 @@ class Bullets extends Phaser.Physics.Arcade.Group {
     }
   }
 
-  handleCollide (gameObject: any) {
-    gameObject.setVisible(false)
-    gameObject.setActive(false)
+  handleCollide (gameObject: any, enemy: any) {
+    if(gameObject.active && !enemy.isExplode) {
+      gameObject.setVisible(false)
+      gameObject.setActive(false)
+    }    
+    // gameObject.destroy()
   }
 }
 

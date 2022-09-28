@@ -37,17 +37,18 @@ export default class Demo extends Phaser.Scene {
     this.bullets = new Bullets(this);
 
     this.enemies = new Enemies(this)
+    this.enemies?.summonEnemy(this.physics.world.bounds.width / 1.5, this.physics.world.bounds.height / 2);
     this.enemies?.summonEnemy(this.physics.world.bounds.width / 1.2, this.physics.world.bounds.height / 2);
     this.enemies?.summonEnemy(this.physics.world.bounds.width / 1.2, this.physics.world.bounds.height / 1.5);
 
     let bullets = this.bullets
     let enemies = this.enemies
-    this.physics.add.collider(
+    this.physics.add.overlap(
       this.bullets,
       this.enemies,
       function (bullet, enemy) {
-        bullets.handleCollide(bullet)
-        enemies.handleCollide(enemy)
+        enemies.handleCollide(enemy, bullet)
+        bullets.handleCollide(bullet, enemy)
       }
     );
 
