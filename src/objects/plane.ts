@@ -36,6 +36,14 @@ class Plane extends Phaser.GameObjects.Sprite {
     }
   }
 
+  setCollider(collideObject: Phaser.GameObjects.GameObject) {
+    this.scene.physics.add.collider(this, collideObject, this.handleCollide, () => {}, this)
+  }
+
+  handleCollide() {
+    console.log("PESAWAT TERTABRAK")
+  }
+
   update(time: number, delta: number): void {
     const {keys, planeSpeed} = gameConfig
 
@@ -49,17 +57,19 @@ class Plane extends Phaser.GameObjects.Sprite {
       }
     }
 
-    if(keys.space.isDown) {
-      let fireBullet = null
-      if("x" in this.body) {
-        this.delayTembak += delta
-        if(this.delayTembak > 200) {
-          fireBullet = new Bullet({scene: this.scene, x: this.body.x, y: this.body.y})
-          this.delayTembak = 0
-        }
-      }
+    // if(keys.space.isDown) {
+    //   let fireBullet = null
+    //   if("x" in this.body) {
+    //     this.delayTembak += delta
+    //     if(this.delayTembak > 200) {
+    //       fireBullet = new Bullet({scene: this.scene, x: this.body.x, y: this.body.y})
+          
+    //       fireBullet.setCollider(fireBullet)
+    //       this.delayTembak = 0
+    //     }
+    //   }
       
-    }
+    // }
   }
 }
 

@@ -1,12 +1,19 @@
 import Phaser from 'phaser';
 import Plane from '../objects/plane';
 import { gameConfig } from "../config"
+import Enemy from '../objects/enemy';
+import Bullets from '../objects/bullet';
+import Enemies from '../objects/enemy';
 
 export default class Demo extends Phaser.Scene {
-  plane: Phaser.GameObjects.Sprite | null;
+  plane: Plane | null;
+  enemies: Enemies | null;
+  bullets: Bullets | null;
   constructor() {
     super('GameScene');
     this.plane = null;
+    this.enemies = null;
+    this.bullets = null;
   }
 
   preload() {
@@ -16,6 +23,8 @@ export default class Demo extends Phaser.Scene {
     this.load.image('bullet1', 'assets/bird/yellowbird-midflap.png');
     this.load.image('bullet2', 'assets/bird/yellowbird-downflap.png');
     this.load.image('bullet3', 'assets/bird/yellowbird-upflap.png');
+    // this.load.image('enemy', 'assets/enemy/dragon.png');
+    this.load.spritesheet('enemy', 'assets/enemy/dragon.png', { frameWidth: 62, frameHeight: 72 });
 
   }
 
@@ -24,6 +33,23 @@ export default class Demo extends Phaser.Scene {
     const logo = this.add.image(400, 70, 'logo');
     this.plane = new Plane({scene: this, x: 100, y: this.physics.world.bounds.height / 2})
     this.physics.add.existing(this.plane)
+
+    this.bullets = new Bullets(this);
+
+    this.enemies = new Enemies(this)
+    this.enemies?.summonEnemy(this.physics.world.bounds.width / 1.2, this.physics.world.bounds.height / 2);
+    this.enemies?.summonEnemy(this.physics.world.bounds.width / 1.2, this.physics.world.bounds.height / 1.5);
+
+    let bullets = this.bullets
+    let enemies = this.enemies
+    this.physics.add.collider(
+      this.bullets,
+      this.enemies,
+      function (bullet, enemy) {
+        bullets.handleCollide(bullet)
+        enemies.handleCollide(enemy)
+      }
+    );
 
     keys.w = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
     keys.s = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
@@ -40,7 +66,12 @@ export default class Demo extends Phaser.Scene {
   }
 
   update(time: number, delta: number): void {
+    const {keys} = gameConfig
+
     this.plane?.update(time, delta)
+    if(keys.space.isDown) {
+      this.bullets?.fireBullet(this.plane!.x, this.plane!.y, delta);
+    }
     // this.plane!.body.setVelocity(0)
 
     // if(keys.w.isDown) {
