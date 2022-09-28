@@ -26,30 +26,21 @@ class Bullet extends Phaser.GameObjects.Sprite {
     scene.physics.world.enableBody(this);
     scene.add.existing(this).play("fire")
     // this.setScale(.4)
+
+    if("setCollideWorldBounds" in this.body) {
+      this.body.onWorldBounds = true;
+      this.body.setCollideWorldBounds(true);
+    }
+
+    scene.physics.world.on("worldbounds",  (body: Phaser.Physics.Arcade.Body) => {
+      body.gameObject.destroy()
+    });
     
     if('setVelocity' in this.body) {
       // this.body.setCollideWorldBounds(true);
       this.body.setImmovable(true)
       this.body.setVelocityX(500)
 
-    }
-  }
-
-  update(): void {
-    const {keys, planeSpeed} = gameConfig
-
-    if('setVelocity' in this.body) {
-      this.body.setVelocity(0)
-      if(keys.w.isDown) {
-        this.body.setVelocityY(-planeSpeed)
-      }
-      if(keys.s.isDown) {
-        this.body.setVelocityY(planeSpeed)
-      }
-    }
-
-    if(keys.space.isDown) {
-      console.log("FIRE")
     }
   }
 }

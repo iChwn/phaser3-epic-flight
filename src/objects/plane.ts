@@ -1,6 +1,5 @@
 import Phaser from "phaser";
 import { gameConfig } from "../config";
-import { msToS } from "../helper";
 import Bullet from "./bullet";
 
 type PlaneType = {
