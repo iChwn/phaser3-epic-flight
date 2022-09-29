@@ -2,19 +2,22 @@ import Phaser from 'phaser';
 import Plane from '../objects/plane';
 import config, { gameConfig } from "../config"
 import Enemy from '../objects/enemy';
-import Bullets from '../objects/bullet';
+import PlaneBullets from '../objects/bullets/planeBullet';
 import Enemies from '../objects/enemy';
 import normalEnemies from '../objects/objectBehaviour/enemy/normalEnemy';
+import EnemyBullets from '../objects/bullets/enemyBullet';
 
 export default class Demo extends Phaser.Scene {
   plane: Plane | null;
   enemies: Enemies | null;
-  bullets: Bullets | null;
+  planeBullets: PlaneBullets | null;
+  enemyBullets: EnemyBullets | null;
   constructor() {
     super('GameScene');
     this.plane = null;
     this.enemies = null;
-    this.bullets = null;
+    this.planeBullets = null;
+    this.enemyBullets = null;
   }
 
   preload() {
@@ -24,6 +27,8 @@ export default class Demo extends Phaser.Scene {
     this.load.image('bullet1', 'assets/bird/yellowbird-midflap.png');
     this.load.image('bullet2', 'assets/bird/yellowbird-downflap.png');
     this.load.image('bullet3', 'assets/bird/yellowbird-upflap.png');
+    this.load.image('Enemybullet1', 'assets/bullet/Bullet (1).png');
+
     // this.load.image('enemy', 'assets/enemy/dragon.png');
     this.load.spritesheet('enemy', 'assets/enemy/dragon.png', { frameWidth: 62, frameHeight: 72 });
 
@@ -35,26 +40,30 @@ export default class Demo extends Phaser.Scene {
     this.plane = new Plane({scene: this, x: 100, y: this.physics.world.bounds.height / 2})
     this.physics.add.existing(this.plane)
 
-    this.bullets = new Bullets(this);
+    this.planeBullets = new PlaneBullets(this);
 
     this.enemies = new Enemies(this)
-    // this.enemies?.summonEnemy(Phaser.Math.Between(0, this.physics.world.bounds.width), Phaser.Math.Between(0, config.height));
-    const worldheight = this.physics.world.bounds.height;
+    this.enemyBullets = new EnemyBullets(this);
+    
+
+    const worldHeight = this.physics.world.bounds.height;
     const worldWidth = this.physics.world.bounds.width;
     for (let i = 0; i < normalEnemies.length; i++) {
       const element = normalEnemies[i];
-      const distance = worldheight / (normalEnemies.length+1) * (i+1)
-      this.enemies?.summonEnemy(worldWidth / 1.2, worldheight - distance, element)      
+      element.setFire = this.enemyBullets
+      const distance = worldHeight / (normalEnemies.length+1) * (i+1)
+
+      this.enemies.summonEnemy(worldWidth + 100, worldHeight - distance, element)      
     }
 
-    let bullets = this.bullets
+    let planeBullets = this.planeBullets
     let enemies = this.enemies
     this.physics.add.overlap(
-      this.bullets,
+      this.planeBullets,
       this.enemies,
       function (bullet, enemy) {
         enemies.handleCollide(enemy, bullet)
-        bullets.handleCollide(bullet, enemy)
+        planeBullets.handleCollide(bullet, enemy)
       }
     );
 
@@ -65,7 +74,7 @@ export default class Demo extends Phaser.Scene {
       function (plane, enemy) {
         planeObj.onCollide(plane)
         // enemies.handleCollide(enemy, bullet)
-        // bullets.handleCollide(bullet, enemy)
+        // planeBullets.handleCollide(bullet, enemy)
       }
     );
 
@@ -88,7 +97,7 @@ export default class Demo extends Phaser.Scene {
 
     this.plane?.update(time, delta)
     if(keys.space.isDown) {
-      this.bullets?.fireBullet(this.plane!.x, this.plane!.y, delta);
+      this.planeBullets?.fireBullet(this.plane!.x, this.plane!.y, delta);
     }
     // this.plane!.body.setVelocity(0)
 

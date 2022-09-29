@@ -1,12 +1,6 @@
 import Phaser from "phaser";
-import { gameConfig } from "../config";
-import { generateUID } from "../helper";
-
-type BulletType = {
-  scene: any,
-  x: number,
-  y: number,
-}
+import { gameConfig } from "../../config";
+import { generateUID } from "../../helper";
 
 class Bullet extends Phaser.Physics.Arcade.Sprite {
   delayTembak: number
@@ -50,7 +44,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
   }
 }
 
-class Bullets extends Phaser.Physics.Arcade.Group {
+class PlaneBullets extends Phaser.Physics.Arcade.Group {
   delayTembak: number
   constructor (scene:any) {
     super(scene.physics.world, scene);
@@ -135,4 +129,4 @@ class Bullets extends Phaser.Physics.Arcade.Group {
 //   }
 // }
 
-export default Bullets;
+export default PlaneBullets;

@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import { gameConfig } from "../config";
-import Bullet from "./bullet";
+import Bullet from "./bullets/planeBullet";
 
 type PlaneType = {
   scene: any,

@@ -47,7 +47,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
   respawnEnemy (x:number, y:number, speed:number) {
     this.body.reset(x, y)
-    // this.setVelocityX(-speed)
+    this.setVelocityX(-speed)
     this.setActive(true)
     this.setVisible(true)
   }
@@ -88,7 +88,7 @@ class Enemies extends Phaser.Physics.Arcade.Group {
     });
   }
 
-  summonEnemy (x:number, y:number, objectProps: NormalEnemiesType) {
+  summonEnemy (x:number, y:number, objectProps: any) {
     let enemy = this.getFirstDead(false);
 
     if(enemy) {
@@ -96,7 +96,7 @@ class Enemies extends Phaser.Physics.Arcade.Group {
       enemy.body.immovable = true
       
       if(objectProps.canFire) {
-        this.enemyFire(enemy)
+        this.enemyFire(enemy.x, enemy.y, objectProps, enemy)
       }
     //   this.delayTembak += delta
     //   if(this.delayTembak > 200) {
@@ -106,15 +106,26 @@ class Enemies extends Phaser.Physics.Arcade.Group {
     }
   }
 
-  enemyFire (enemy: any) {
-    var intervalID = setInterval(function() {
+  enemyFire (x:number, y:number, objectProps: NormalEnemiesType, enemy: any) {
+    console.log(objectProps)
+    let bulletSpeed = objectProps.bulletBehaviour.speed
+    let intervalID = setInterval(function() {
       enemy.playAfterRepeat('idleEnemy')
-      let anims = ["attackEnemy", "attackEnemyAfter", "idleEnemy"]
+      let anims = [
+        "attackEnemy",
+        { 
+          animate: "attackEnemyAfter", 
+          triggerEvent: (callback: NormalEnemiesType) => objectProps.setFire?.fireBullet(callback.x-35  , y-15, bulletSpeed)
+        },
+        "idleEnemy"
+      ]
+
       chainAnim(anims, enemy) 
-    }, 3000);
+    }, 1000);
+
     setTimeout(function() {
         clearInterval(intervalID);
-    }, 6000);
+    }, 10000);
   }
 
   handleCollide (gameObject: any, bullet: any) {

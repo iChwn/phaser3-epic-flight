@@ -10,8 +10,14 @@ function generateUID(length:number){
 const chainAnim = (animation: any, gameObject: any, start:number = 0) => {
   let i = start
   if(i < animation.length) {
-    gameObject.play(animation[i])
-    .on(Phaser.Animations.Events.ANIMATION_COMPLETE_KEY+animation[i], () => {
+    const animate = animation[i].animate ? animation[i].animate : animation[i] 
+
+    if(animation[i].triggerEvent) {
+      animation[i].triggerEvent(gameObject)
+    }
+    
+    gameObject.play(animate)
+    .on(Phaser.Animations.Events.ANIMATION_COMPLETE_KEY+animate, () => {
       chainAnim(animation, gameObject, i + 1)
     });
   }
