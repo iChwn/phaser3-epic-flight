@@ -7,4 +7,14 @@ function generateUID(length:number){
     return window.btoa(String.fromCharCode(...window.crypto.getRandomValues(new Uint8Array(length * 2)))).replace(/[+/]/g, "").substring(0, length);
 }
 
-export {msToS, generateUID}
+const chainAnim = (animation: any, gameObject: any, start:number = 0) => {
+  let i = start
+  if(i < animation.length) {
+    gameObject.play(animation[i])
+    .on(Phaser.Animations.Events.ANIMATION_COMPLETE_KEY+animation[i], () => {
+      chainAnim(animation, gameObject, i + 1)
+    });
+  }
+}
+
+export {msToS, generateUID, chainAnim}
