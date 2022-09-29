@@ -53,7 +53,7 @@ export default class Demo extends Phaser.Scene {
       element.setFire = this.enemyBullets
       const distance = worldHeight / (normalEnemies.length+1) * (i+1)
 
-      this.enemies.summonEnemy(worldWidth + 100, worldHeight - distance, element)      
+      this.enemies.summonEnemy(worldWidth / 1.2, worldHeight - distance, element)      
     }
 
     let planeBullets = this.planeBullets

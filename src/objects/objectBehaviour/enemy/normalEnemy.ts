@@ -20,7 +20,7 @@ const normalEnemies = [
     y: 0,
     type: "normal",
     canFire: true,
-    speed: 100,
+    speed: 0,
     setFire: {},
     bulletBehaviour: {
       speed: 500
@@ -97,7 +97,7 @@ const normalEnemies = [
     y: 0,
     type: "normal",
     canFire: true,
-    speed: 100,
+    speed: 0,
     setFire: {},
     bulletBehaviour: {
       speed: 500
