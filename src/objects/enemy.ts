@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { chainAnim, generateUID } from "../helper";
+import { NormalEnemiesType } from "./objectBehaviour/enemy/normalEnemy";
 
 class Enemy extends Phaser.Physics.Arcade.Sprite {
   isExplode: boolean;
@@ -44,9 +45,9 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this).play("idleEnemy")
   }
 
-  respawnEnemy (x:number, y:number){
+  respawnEnemy (x:number, y:number, speed:number) {
     this.body.reset(x, y)
-    this.setVelocityX(-100)
+    // this.setVelocityX(-speed)
     this.setActive(true)
     this.setVisible(true)
   }
@@ -71,7 +72,7 @@ class Enemies extends Phaser.Physics.Arcade.Group {
     // this.SpritesPlatform = this.game.add.physicsGroup();
     // scene.physics.world.enableBody(this);
     this.createMultiple({
-      frameQuantity: 5,
+      frameQuantity: 10,
       key: 'bullet',
       active: false,
       visible: false,
@@ -87,13 +88,16 @@ class Enemies extends Phaser.Physics.Arcade.Group {
     });
   }
 
-  summonEnemy (x:number, y:number) {
+  summonEnemy (x:number, y:number, objectProps: NormalEnemiesType) {
     let enemy = this.getFirstDead(false);
 
     if(enemy) {
-      enemy.respawnEnemy(x+50, y+30);
+      enemy.respawnEnemy(x, y, objectProps.speed);
       enemy.body.immovable = true
-      this.enemyFire(enemy)
+      
+      if(objectProps.canFire) {
+        this.enemyFire(enemy)
+      }
     //   this.delayTembak += delta
     //   if(this.delayTembak > 200) {
     //     enemy.respawnEnemy(x+50, y+30, delta);

@@ -4,6 +4,7 @@ import config, { gameConfig } from "../config"
 import Enemy from '../objects/enemy';
 import Bullets from '../objects/bullet';
 import Enemies from '../objects/enemy';
+import normalEnemies from '../objects/objectBehaviour/enemy/normalEnemy';
 
 export default class Demo extends Phaser.Scene {
   plane: Plane | null;
@@ -38,10 +39,13 @@ export default class Demo extends Phaser.Scene {
 
     this.enemies = new Enemies(this)
     // this.enemies?.summonEnemy(Phaser.Math.Between(0, this.physics.world.bounds.width), Phaser.Math.Between(0, config.height));
-    this.enemies?.summonEnemy(this.physics.world.bounds.width, this.physics.world.bounds.height / 1.2);
-    this.enemies?.summonEnemy(this.physics.world.bounds.width / 1.5, this.physics.world.bounds.height / 2);
-    this.enemies?.summonEnemy(this.physics.world.bounds.width / 1.2, this.physics.world.bounds.height / 2);
-    this.enemies?.summonEnemy(this.physics.world.bounds.width / 1.2, this.physics.world.bounds.height / 1.5);
+    const worldheight = this.physics.world.bounds.height;
+    const worldWidth = this.physics.world.bounds.width;
+    for (let i = 0; i < normalEnemies.length; i++) {
+      const element = normalEnemies[i];
+      const distance = worldheight / (normalEnemies.length+1) * (i+1)
+      this.enemies?.summonEnemy(worldWidth / 1.2, worldheight - distance, element)      
+    }
 
     let bullets = this.bullets
     let enemies = this.enemies
