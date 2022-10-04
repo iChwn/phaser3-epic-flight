@@ -37,7 +37,7 @@ class Plane extends Phaser.GameObjects.Sprite {
   }
 
   onCollide(collideObject: Phaser.GameObjects.GameObject) {
-    console.log(collideObject)
+    // console.log(collideObject)
   }
 
   handleCollide() {

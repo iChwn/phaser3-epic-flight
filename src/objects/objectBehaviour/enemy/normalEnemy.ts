@@ -2,7 +2,17 @@ import EnemyBullets from "../../bullets/enemyBullet";
 
 type BulletBehaviour = {
   speed: number;
+  shootEvery: number;
+  shootDuration: number;
+  kamikaze: boolean;
 }
+
+export type ZigzagBehaviour = {
+  duration: number;
+  wave: number;
+  waveHeight: number;
+}
+
 
 export type NormalEnemiesType = {
   x: number;
@@ -12,6 +22,7 @@ export type NormalEnemiesType = {
   speed: number;
   setFire: EnemyBullets;
   bulletBehaviour: BulletBehaviour;
+  zigzagBehaviour: ZigzagBehaviour;
 }
 
 const normalEnemies = [
@@ -23,7 +34,10 @@ const normalEnemies = [
     speed: 0,
     setFire: {},
     bulletBehaviour: {
-      speed: 500
+      speed: 500,
+      shootEvery: 1000,
+      shootDuration: 3000,
+      kamikaze: true
     }
   },
   {
@@ -34,18 +48,32 @@ const normalEnemies = [
     speed: 150,
     setFire: {},
     bulletBehaviour: {
-      speed: 150
+      speed: 150,
+      shootEvery: 1000,
+      shootDuration: 10000
+    },
+    zigzagBehaviour: {
+      duration: 6000,
+      wave: 20,
+      waveHeight: 30
     }
   },
   {
     x: 0,
     y: 0,
     type: "normal",
-    canFire: false,
+    canFire: true,
     speed: 200,
     setFire: {},
     bulletBehaviour: {
-      speed: 150
+      speed: 250,
+      shootEvery: 1000,
+      shootDuration: 10000
+    },
+    zigzagBehaviour: {
+      duration: 10000,
+      wave: 20,
+      waveHeight: 60
     }
   },
   {
@@ -56,7 +84,22 @@ const normalEnemies = [
     speed: 250,
     setFire: {},
     bulletBehaviour: {
-      speed: 150
+      speed: 150,
+      shootEvery: 1000,
+      shootDuration: 10000
+    }
+  },
+  {
+    x: 0,
+    y: 0,
+    type: "normal",
+    canFire: false,
+    speed: 300,
+    setFire: {},
+    bulletBehaviour: {
+      speed: 150,
+      shootEvery: 1000,
+      shootDuration: 10000
     }
   },
   {
@@ -67,18 +110,27 @@ const normalEnemies = [
     speed: 250,
     setFire: {},
     bulletBehaviour: {
-      speed: 150
+      speed: 150,
+      shootEvery: 1000,
+      shootDuration: 10000
     }
   },
   {
     x: 0,
     y: 0,
     type: "normal",
-    canFire: false,
+    canFire: true,
     speed: 200,
     setFire: {},
     bulletBehaviour: {
-      speed: 150
+      speed: 250,
+      shootEvery: 1000,
+      shootDuration: 10000
+    },
+    zigzagBehaviour: {
+      duration: 10000,
+      wave: 20,
+      waveHeight: 60
     }
   },
   {
@@ -89,7 +141,14 @@ const normalEnemies = [
     speed: 150,
     setFire: {},
     bulletBehaviour: {
-      speed: 150
+      speed: 150,
+      shootEvery: 1000,
+      shootDuration: 10000
+    },
+    zigzagBehaviour: {
+      duration: 6000,
+      wave: 20,
+      waveHeight: 30
     }
   },
   {
@@ -100,7 +159,9 @@ const normalEnemies = [
     speed: 0,
     setFire: {},
     bulletBehaviour: {
-      speed: 500
+      speed: 500,
+      shootEvery: 1000,
+      shootDuration: 10000
     }
   },
 ]
