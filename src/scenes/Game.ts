@@ -1,23 +1,30 @@
 import Phaser from 'phaser';
 import Plane from '../objects/plane';
 import config, { gameConfig } from "../config"
-import Enemy from '../objects/enemy';
 import PlaneBullets from '../objects/bullets/planeBullet';
-import Enemies from '../objects/enemy';
 import normalEnemies from '../objects/objectBehaviour/enemy/normalEnemy';
 import EnemyBullets from '../objects/bullets/enemyBullet';
+import EnemyShoot from '../objects/enemy/enemyShoot';
+import EnemiesBase from '../objects/enemy/enemyBase';
+import EnemyForward from '../objects/enemy/enemyForward';
+import forwardEnemies from '../objects/objectBehaviour/enemy/forwardEnemy';
+import shootEnemies from '../objects/objectBehaviour/enemy/shootEnemy';
 
 export default class Demo extends Phaser.Scene {
   plane: Plane | null;
-  enemies: Enemies | null;
   planeBullets: PlaneBullets | null;
   enemyBullets: EnemyBullets | null;
+  overlayTimer: number;
+  overlayTimeout: number;
+  waveState: number;
   constructor() {
     super('GameScene');
     this.plane = null;
-    this.enemies = null;
     this.planeBullets = null;
     this.enemyBullets = null;
+    this.overlayTimer = 0;
+    this.overlayTimeout = 2000;
+    this.waveState = 0;
   }
 
   preload() {
@@ -39,42 +46,10 @@ export default class Demo extends Phaser.Scene {
     this.physics.add.existing(this.plane)
 
     this.planeBullets = new PlaneBullets(this);
-
-    this.enemies = new Enemies(this)
     this.enemyBullets = new EnemyBullets(this);
     
-
-    const worldHeight = this.physics.world.bounds.height;
-    const worldWidth = this.physics.world.bounds.width;
-    for (let i = 0; i < normalEnemies.length; i++) {
-      const element = normalEnemies[i];
-      element.setFire = this.enemyBullets
-      const distance = worldHeight / (normalEnemies.length+1) * (i+1)
-
-      this.enemies.summonEnemy(worldWidth / 1.2, worldHeight - distance, element)      
-    }
-
-    let planeBullets = this.planeBullets
-    let enemies = this.enemies
-    this.physics.add.overlap(
-      this.planeBullets,
-      this.enemies,
-      function (bullet, enemy) {
-        enemies.handleCollide(enemy, bullet)
-        planeBullets.handleCollide(bullet, enemy)
-      }
-    );
-
-    let planeObj = this.plane
-    this.physics.add.collider(
-      this.plane,
-      this.enemies,
-      function (plane, enemy) {
-        planeObj.onCollide(plane)
-        // enemies.handleCollide(enemy, bullet)
-        // planeBullets.handleCollide(bullet, enemy)
-      }
-    );
+    this.setEnemy(normalEnemies, new EnemiesBase(this))
+    // new EnemiesBase(this)
 
     keys.w = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
     keys.s = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
@@ -82,9 +57,50 @@ export default class Demo extends Phaser.Scene {
 
   }
 
+  setEnemy(enemiesList:any, enemy:any) {
+    const worldHeight = this.physics.world.bounds.height;
+    const worldWidth = this.physics.world.bounds.width;
+    const enemyLength = enemiesList.length
+    this.waveState = this.waveState + 1;
+
+    for (let i = 0; i < enemyLength; i++) {
+      const element = enemiesList[i];
+      element.setFire = this.enemyBullets
+      const distance = worldHeight / (enemyLength+1) * (i+1)
+
+      enemy!.summonEnemy(worldWidth / 1.2, worldHeight - distance, enemyLength, element)      
+    }
+
+    let planeBullets = this.planeBullets
+    let enemies = enemy
+    let self = this
+
+    this.physics.add.overlap(
+      this.planeBullets!,
+      enemy!,
+      function (bullet, enemy) {
+        enemies!.handleCollide(enemy, bullet, (kasar:number) => {
+          clearTimeout(self.overlayTimer);
+          self.overlayTimer = setTimeout(() => {
+            console.log(kasar)
+            if(kasar === 0) {
+              if(self.waveState === 1) {
+                self.setEnemy(forwardEnemies, new EnemyForward(self))
+              } else if(self.waveState === 2) {
+                self.setEnemy(shootEnemies, new EnemyShoot(self))
+              } 
+            }
+          }, self.overlayTimeout);
+        })
+
+        planeBullets!.handleCollide(bullet, enemy)
+      }
+    );
+  }
+
   update(time: number, delta: number): void {
     const {keys} = gameConfig
-
+    // console.log(this.enemies1?.children.entries.length)
     this.plane?.update(time, delta)
     if(keys.space.isDown) {
       this.planeBullets?.fireBullet(this.plane!.x, this.plane!.y, delta);

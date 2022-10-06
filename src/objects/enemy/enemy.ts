@@ -1,6 +1,6 @@
 import Phaser from "phaser";
-import { chainAnim, generateUID } from "../helper";
-import { NormalEnemiesType, ZigzagBehaviour } from "./objectBehaviour/enemy/normalEnemy";
+import { chainAnim, generateUID } from "../../helper";
+import { NormalEnemiesType, ZigzagBehaviour } from "../objectBehaviour/enemy/enemyType";
 
 class Enemy extends Phaser.Physics.Arcade.Sprite {
   isExplode: boolean;
@@ -62,12 +62,13 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
   respawnEnemy (x:number, y:number, objectProps:NormalEnemiesType) {
     this.body.reset(x, y)
     this.zigzagBehaviour = objectProps.zigzagBehaviour
+    this.isExplode = false
     
     if(this.zigzagBehaviour) {
       this.createPattern(objectProps)
     }
 
-    this.setVelocityX(-objectProps.speed)
+    // this.setVelocityX(-objectProps.speed)
     this.setActive(true)
     this.setVisible(true)
   }
@@ -119,108 +120,9 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     if(this.x <= -50){
       this.setActive(false);
       this.setVisible(false);
-      this.destroy()
+      // this.destroy()
     }
   }
 }
 
-class Enemies extends Phaser.Physics.Arcade.Group {
-  delayTembak: number
-  constructor (scene:any) {
-    super(scene.physics.world, scene);
-    this.delayTembak = 0
-
-    // this.SpritesPlatform = this.game.add.physicsGroup();
-    // scene.physics.world.enableBody(this);
-    this.createMultiple({
-      frameQuantity: 10,
-      key: 'bullet',
-      active: false,
-      visible: false,
-      setScale: {
-        x: 1.5,
-        y: 1.5
-      },
-      setXY: {
-        x: -50,
-        y: -100
-      },
-      classType: Enemy
-    });
-  }
-
-  summonEnemy (x:number, y:number, objectProps: any) {
-    let enemy = this.getFirstDead(false);
-
-    if(enemy) {
-      enemy.respawnEnemy(x, y, objectProps);
-      enemy.body.immovable = true
-      
-      if(objectProps.canFire) {
-        this.enemyFire(enemy.x, enemy.y, objectProps, enemy)
-      }
-    //   this.delayTembak += delta
-    //   if(this.delayTembak > 200) {
-    //     enemy.respawnEnemy(x+50, y+30, delta);
-    //     this.delayTembak = 0
-    //   }
-    }
-  }
-
-  enemyFire (x:number, y:number, objectProps: NormalEnemiesType, enemy: any) {
-    const {bulletBehaviour}= objectProps
-    let intervalID = setInterval(function() {
-      enemy.playAfterRepeat('idleEnemy')
-      let anims = [
-        "attackEnemy",
-        { 
-          animate: "attackEnemyAfter", 
-          triggerEvent: (callback: NormalEnemiesType) => objectProps.setFire?.fireBullet(callback.x-35  , callback.y, bulletBehaviour.speed)
-        },
-        "idleEnemy"
-      ]
-
-      chainAnim(anims, enemy) 
-    }, bulletBehaviour.shootEvery);
-
-    const self = this;
-    setTimeout(function() {
-      clearInterval(intervalID);
-      if(bulletBehaviour.kamikaze) {
-        self.sacrificeYourself(enemy)
-      }
-    }, bulletBehaviour.shootDuration);
-  }
-
-  sacrificeYourself(enemy:any) {
-    setTimeout(() => {
-      enemy.play("sacrificeEnemy");
-      enemy.setVelocity(-800, -350)
-      setTimeout(() => {
-        enemy.play("deathEnemy");
-      }, 800);
-    }, 2000)
-  }
-
-  handleCollide (gameObject: any, bullet: any) {
-    if(bullet.active && !gameObject.isExplode) {
-      gameObject.isExplode = true
-
-      bullet.setVisible(false)
-      bullet.setActive(false)
-
-      gameObject.setVelocity(0)
-      gameObject.playAfterRepeat('idleEnemy')
-      gameObject.play('deathEnemy')
-      // this.scene.physics.world.colliders.destroy();      
-      setTimeout(() => {
-        gameObject.setVisible(false)
-        gameObject.setActive(false)
-        gameObject.destroy()
-      }, 500);
-    }
-    
-  }
-}
-
-export default Enemies;
+export default Enemy;

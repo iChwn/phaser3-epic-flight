@@ -1,4 +1,4 @@
- const normalEnemies = [
+const forwardEnemies = [
   {
     x: 0,
     y: 0,
@@ -25,7 +25,11 @@
       shootEvery: 1000,
       shootDuration: 10000
     },
- 
+    zigzagBehaviour: {
+      duration: 6000,
+      wave: 20,
+      waveHeight: 30
+    }
   },
   {
     x: 0,
@@ -39,7 +43,11 @@
       shootEvery: 1000,
       shootDuration: 10000
     },
-    
+    zigzagBehaviour: {
+      duration: 10000,
+      wave: 20,
+      waveHeight: 60
+    }
   },
   {
     x: 0,
@@ -92,7 +100,11 @@
       shootEvery: 1000,
       shootDuration: 10000
     },
- 
+    zigzagBehaviour: {
+      duration: 10000,
+      wave: 20,
+      waveHeight: 60
+    }
   },
   {
     x: 0,
@@ -106,6 +118,11 @@
       shootEvery: 1000,
       shootDuration: 10000
     },
+    zigzagBehaviour: {
+      duration: 6000,
+      wave: 20,
+      waveHeight: 30
+    }
   },
   {
     x: 0,
@@ -122,4 +139,4 @@
   },
 ]
 
-export default normalEnemies
+export default forwardEnemies
