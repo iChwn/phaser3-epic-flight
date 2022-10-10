@@ -4,9 +4,13 @@ import Enemy from "./enemy";
 
 class EnemiesBase extends Phaser.Physics.Arcade.Group {
   enemyLength:number;
+  overlayTimer: number;
+  overlayTimeout: number;
   constructor (scene:any) {
     super(scene.physics.world, scene);
     this.enemyLength = 0;
+    this.overlayTimer = 0;
+    this.overlayTimeout = 2000;
 
     // this.SpritesPlatform = this.game.add.physicsGroup();
     // scene.physics.world.enableBody(this);
@@ -41,6 +45,7 @@ class EnemiesBase extends Phaser.Physics.Arcade.Group {
     if(bullet.active && !gameObject.isExplode) {
       this.enemyLength = this.enemyLength - 1
       gameObject.isExplode = true
+      gameObject.setVelocity(0,0)
 
       bullet.setVisible(false)
       bullet.setActive(false)      
@@ -59,10 +64,25 @@ class EnemiesBase extends Phaser.Physics.Arcade.Group {
         gameObject.setVisible(false)
         gameObject.setActive(false)
         // gameObject.destroy()
-        console.log(self.enemyLength)
+        // console.log(self.enemyLength)
         callback(self.enemyLength)
       }, 500);
     }
+  }
+
+  onStopCollide(object: Phaser.Physics.Arcade.Sprite) {
+    if(object.body.x < -50) {
+      object.setActive(false)
+      object.setVisible(false)
+      if(!object.active) {
+        console.log("WADEZIG")
+      }
+    }
+    // clearTimeout(this.overlayTimer);
+    // this.overlayTimer = setTimeout(() => {
+    //   this.enemyLength = this.enemyLength - 1
+      
+    // }, this.overlayTimeout);
   }
 }
 

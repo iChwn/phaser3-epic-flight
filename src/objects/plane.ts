@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import game from "..";
 import { gameConfig } from "../config";
 import Bullet from "./bullets/planeBullet";
 
@@ -41,7 +42,18 @@ class Plane extends Phaser.GameObjects.Sprite {
   }
 
   handleCollide() {
-    console.log("PESAWAT TERTABRAK")
+    let over = this.scene.add.text(
+      this.scene.physics.world.bounds.width / 2,
+      this.scene.physics.world.bounds.height / 1.5, 
+      'GAME OVER');
+
+    over.setInteractive().on('pointerdown', function() {
+      // this.scene.scene.start('GameScene');
+      console.log("wwd")
+    });
+    over.setOrigin(.5);
+    over.setDepth(3)
+    game.scene.pause("GameScene")
   }
 
   update(time: number, delta: number): void {

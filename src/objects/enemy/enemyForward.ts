@@ -12,7 +12,7 @@ export default class EnemyForward extends EnemiesBase {
     if(enemy) {
       enemy.respawnEnemy(x, y, objectProps);
       enemy.body.immovable = true
-      enemy.setVelocityX(-100)
+      enemy.setVelocityX(-objectProps.speed)
     }
   }
 }

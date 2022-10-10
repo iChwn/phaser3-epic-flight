@@ -117,11 +117,11 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
       this.setPosition(velo.x, velo.y)
     }
 
-    if(this.x <= -50){
-      this.setActive(false);
-      this.setVisible(false);
-      // this.destroy()
-    }
+    // if(this.x <= -50){
+    //   this.setActive(false);
+    //   this.setVisible(false);
+    //   // this.destroy()
+    // }
   }
 }
 

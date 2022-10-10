@@ -14,6 +14,7 @@ export default class EnemyShoot extends EnemiesBase {
     if(enemy) {
       enemy.respawnEnemy(x, y, objectProps);
       enemy.body.immovable = true
+      enemy.setVelocityX(-objectProps.speed)      
       
       this.enemyFire(enemy.x, enemy.y, objectProps, enemy)
     }

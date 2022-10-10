@@ -9,14 +9,18 @@ import EnemiesBase from '../objects/enemy/enemyBase';
 import EnemyForward from '../objects/enemy/enemyForward';
 import forwardEnemies from '../objects/objectBehaviour/enemy/forwardEnemy';
 import shootEnemies from '../objects/objectBehaviour/enemy/shootEnemy';
+import zagEnemy from '../objects/objectBehaviour/enemy/zagEnemy';
+import shootEnemy from '../objects/objectBehaviour/enemy/shootEnemy';
+import shootZagEnemy from '../objects/objectBehaviour/enemy/shootZagEnemy';
 
-export default class Demo extends Phaser.Scene {
+export default class GameScene extends Phaser.Scene {
   plane: Plane | null;
   planeBullets: PlaneBullets | null;
   enemyBullets: EnemyBullets | null;
   overlayTimer: number;
   overlayTimeout: number;
   waveState: number;
+  leftBound: Phaser.GameObjects.Rectangle | null;
   constructor() {
     super('GameScene');
     this.plane = null;
@@ -25,6 +29,7 @@ export default class Demo extends Phaser.Scene {
     this.overlayTimer = 0;
     this.overlayTimeout = 2000;
     this.waveState = 0;
+    this.leftBound = null;
   }
 
   preload() {
@@ -47,14 +52,16 @@ export default class Demo extends Phaser.Scene {
 
     this.planeBullets = new PlaneBullets(this);
     this.enemyBullets = new EnemyBullets(this);
+
+    this.leftBound = this.add.rectangle(5, this.physics.world.bounds.height/2, 10, this.physics.world.bounds.height, 0x6666ff);
+    this.physics.add.existing(this.leftBound);
     
-    this.setEnemy(normalEnemies, new EnemiesBase(this))
+    this.setEnemy(forwardEnemies, new EnemyForward(this))
     // new EnemiesBase(this)
 
     keys.w = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
     keys.s = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-    keys.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-
+    keys.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE); 
   }
 
   setEnemy(enemiesList:any, enemy:any) {
@@ -68,7 +75,7 @@ export default class Demo extends Phaser.Scene {
       element.setFire = this.enemyBullets
       const distance = worldHeight / (enemyLength+1) * (i+1)
 
-      enemy!.summonEnemy(worldWidth / 1.2, worldHeight - distance, enemyLength, element)      
+      enemy!.summonEnemy(worldWidth + 50, worldHeight - distance, enemyLength, element)      
     }
 
     let planeBullets = this.planeBullets
@@ -77,25 +84,59 @@ export default class Demo extends Phaser.Scene {
 
     this.physics.add.overlap(
       this.planeBullets!,
-      enemy!,
+      enemy,
       function (bullet, enemy) {
         enemies!.handleCollide(enemy, bullet, (kasar:number) => {
           clearTimeout(self.overlayTimer);
           self.overlayTimer = setTimeout(() => {
-            console.log(kasar)
-            if(kasar === 0) {
-              if(self.waveState === 1) {
-                self.setEnemy(forwardEnemies, new EnemyForward(self))
-              } else if(self.waveState === 2) {
-                self.setEnemy(shootEnemies, new EnemyShoot(self))
-              } 
-            }
+            self.setWave(kasar)
           }, self.overlayTimeout);
         })
 
         planeBullets!.handleCollide(bullet, enemy)
       }
     );
+
+    this.physics.add.overlap(
+      enemy,
+      this.leftBound!,
+      function (bound, object) {
+        enemy.onStopCollide(object)
+      }
+    );
+
+    this.physics.add.overlap(
+      this.plane!,
+      enemy,
+      function (bullet, enemy) {
+        self.plane!.handleCollide()
+      }
+    );
+
+    this.physics.add.overlap(
+      this.plane!,
+      this.enemyBullets!,
+      function (bullet, enemy) {
+        self.plane!.handleCollide()
+      }
+    );
+  }
+
+  setWave(kasar:number) {
+    if(kasar === 0) {
+      if(this.waveState === 1) {
+        this.setEnemy(zagEnemy, new EnemyForward(this))
+      } else if(this.waveState === 2) {
+        this.setEnemy(shootEnemies, new EnemyShoot(this))
+      } else if(this.waveState === 3) {
+        this.setEnemy(shootZagEnemy, new EnemyShoot(this))
+      } else {
+        this.add.text(
+          this.physics.world.bounds.width / 2,
+          this.physics.world.bounds.height / 1.5, 
+          'MENANG!');
+      }
+    }
   }
 
   update(time: number, delta: number): void {
