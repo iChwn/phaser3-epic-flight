@@ -44,7 +44,7 @@ class Plane extends Phaser.GameObjects.Sprite {
   handleCollide() {
     let over = this.scene.add.text(
       this.scene.physics.world.bounds.width / 2,
-      this.scene.physics.world.bounds.height / 1.5, 
+      this.scene.physics.world.bounds.height / 2, 
       'GAME OVER');
 
     over.setInteractive().on('pointerdown', function() {

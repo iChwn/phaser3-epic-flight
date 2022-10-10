@@ -12,6 +12,7 @@ import shootEnemies from '../objects/objectBehaviour/enemy/shootEnemy';
 import zagEnemy from '../objects/objectBehaviour/enemy/zagEnemy';
 import shootEnemy from '../objects/objectBehaviour/enemy/shootEnemy';
 import shootZagEnemy from '../objects/objectBehaviour/enemy/shootZagEnemy';
+import game from '..';
 
 export default class GameScene extends Phaser.Scene {
   plane: Plane | null;
@@ -133,8 +134,9 @@ export default class GameScene extends Phaser.Scene {
       } else {
         this.add.text(
           this.physics.world.bounds.width / 2,
-          this.physics.world.bounds.height / 1.5, 
+          this.physics.world.bounds.height / 2, 
           'MENANG!');
+          game.scene.pause("GameScene")
       }
     }
   }
